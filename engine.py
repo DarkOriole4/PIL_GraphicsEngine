@@ -24,34 +24,51 @@ def draw_line(start, end, color):
     elif end[0]<0 or end[1]<0 or end[0]>render_res or end[1]>render_res:
         raise ValueError('Invalid end coordinate')
     
+    
+    #FIX DRAW DIRECTION
+    if start[0] > end[0]: #if right-to-left, swap start with end
+        tmp = end
+        end = start
+        start = tmp
+    
+    if start[1] > end[1]: #if bottom-to-top, swap top with bottom
+        tmp = end
+        end = start
+        start = tmp
+        
+    
     elif start[0] != end[0]: #non-vertical line
         cursor = list(start)
-        h_steps = numpy.abs(end[0] - start[0])
-        v_steps = end[1] - start[1]
-        slope = v_steps / h_steps
+        slope = numpy.abs(end[1] - start[1]) / numpy.abs(end[0] - start[0])
+        stepval = int(slope) #slope's whole component
+        if slope > 1 and slope < -1:             #
+            slope_mod = (slope % stepval) ** -1  # slope_mod: the frequency at which an additional px needs to be added
+        else:                                    #
+            slope_mod = slope ** -1              #
         
-        h_count = 0
-        v_count = 0
-        while h_count < h_steps and h_count > -h_steps:
-            img.putpixel(cursor, color)
-            if start[0] < end[0]: #left to right
-                h_count += 1
-            else: #right to left
-                h_count -= 1
+        #img.putpixel(start, color) #put first pixel at start
+        count2 = 1
+        while cursor[0] < end[0]: #REPEAT UNTIL THE CURSOR REACHES THE END       
+            cursor[0] += 1
             
-            if numpy.abs(slope) > 1: #line requires unusual stepping
-                subv_count = 0
-                if slope >= 0:
-                    while subv_count < int(slope):
-                        subv_count += 1
-                        img.putpixel((start[0]+h_count, start[1]+v_count+subv_count), color)
-                else:
-                    while subv_count > int(slope):
-                        subv_count -= 1
-                        img.putpixel((start[0]+h_count, start[1]+v_count+subv_count), color)
-                        
-            v_count += int(slope)
-            cursor = [start[0]+h_count, start[1]+v_count] #increment cursor
+            #img.putpixel(cursor, color) # fill in the steps (optional: changes the line's style)
+            
+            count1 = stepval
+            if slope != 0: #not horizontal line
+                while count1 > 0:
+                    cursor[1] += 1
+                    img.putpixel(cursor, color)
+                    count1 -= 1
+                #END OF STEP
+                count2 = (count2 + 1) % slope_mod
+                    
+                if count2 < 0.05: #add 1px if needed
+                    cursor[1] += 1
+                    img.putpixel(cursor, color)
+            else:
+                img.putpixel(cursor, color)
+                    
+            
             
     elif start[0] == end[0]: #vertical line
         cursor = list(start)
@@ -59,16 +76,11 @@ def draw_line(start, end, color):
         v_steps = end[1] - start[1]
         
         v_count = 0
-        if v_steps > 0: # top to bottom
+        if v_steps > 0:
             while v_count < v_steps:
                 img.putpixel((cursor[0], start[1]+v_count), color)
-                v_count += 1 #top to bottom
+                v_count += 1
                 
-        elif v_steps < 0: # bottom to top
-            while v_count > v_steps:
-                img.putpixel((cursor[0], start[1]+v_count), color)
-                v_count -= 1
-
 def render_frame(frame):
     global img
     start = time.time_ns()
@@ -82,29 +94,11 @@ def render_frame(frame):
         color = (int(x*(255/render_res)), int(y*(255/render_res)), 255)
         img.putpixel((x, y), color)
         
-    # #draw test rowneglobok
-    # draw_line((5, 5), (35, 5), (255, 255, 0))
+    ##draw test polygon
+    draw_line((5, 5), (35, 5), (255, 255, 0))
     draw_line((35, 5), (59, 59), (255, 255, 0))
-    # draw_line((59, 59), (29, 59), (255, 255, 0))
-    # draw_line((29, 59), (5, 5), (255, 255, 0))
-    
-    # #DEBUG VERTICES
-    # img.putpixel((5, 5), (0, 0, 0))
-    # img.putpixel((35, 5), (0, 0, 0))
-    # img.putpixel((59, 59), (0, 0, 0))
-    # img.putpixel((29, 59), (0, 0, 0))
-    
-    # #draw test kwadrat
-    # draw_line((5, 5), (35, 5), (255, 255, 0))
-    # draw_line((35, 5), (35, 35), (255, 0, 255))
-    # draw_line((35, 35), (5, 35), (0, 255, 255))
-    # draw_line((5, 35), (5, 5), (255, 255, 255))
-    
-    # #DEBUG VERTICES
-    # img.putpixel((5, 5), (0, 0, 0))
-    # img.putpixel((35, 5), (0, 0, 0))
-    # img.putpixel((35, 35), (0, 0, 0))
-    # img.putpixel((5, 35), (0, 0, 0))
+    draw_line((59, 59), (29, 59), (255, 255, 0))
+    draw_line((29, 59), (5, 5), (255, 255, 0))
             
     #UPSCALE
     factor = upscale_res / render_res
