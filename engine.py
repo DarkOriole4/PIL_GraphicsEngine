@@ -27,14 +27,14 @@ def draw_line(start, end, color):
     
     #FIX DRAW DIRECTION
     if start[0] > end[0]: #if right-to-left, swap start with end
-        tmp = end
+        temp = end
         end = start
-        start = tmp
+        start = temp
     
     if start[1] > end[1]: #if bottom-to-top, swap top with bottom
-        tmp = end
+        temp = end
         end = start
-        start = tmp
+        start = temp
         
     
     elif start[0] != end[0]: #non-vertical line
@@ -72,7 +72,6 @@ def draw_line(start, end, color):
             
     elif start[0] == end[0]: #vertical line
         cursor = list(start)
-        h_steps = numpy.abs(end[0] - start[0])
         v_steps = end[1] - start[1]
         
         v_count = 0
@@ -94,11 +93,19 @@ def render_frame(frame):
         color = (int(x*(255/render_res)), int(y*(255/render_res)), 255)
         img.putpixel((x, y), color)
         
-    ##draw test polygon
-    draw_line((5, 5), (35, 5), (255, 255, 0))
-    draw_line((35, 5), (59, 59), (255, 255, 0))
-    draw_line((59, 59), (29, 59), (255, 255, 0))
-    draw_line((29, 59), (5, 5), (255, 255, 0))
+    ##ANIMATE TEST POLYGON
+    #bottom line moves up and down between 5 and 60
+    #for some reason draw_line() doesn't like bottom-to-top lines
+    y_pos = int(((numpy.sin(numpy.deg2rad(frame%360)) + 1) / 2) * 55 + 5) #sorry, this is hard to read
+    draw_line((5, 5), [35, 5], (255, 255, 0))
+    # draw_line((35, 5), [59, y_pos], (255, 255, 0))
+    draw_line((59, y_pos), [29, y_pos], (255, 255, 0))
+    # draw_line((29, y_pos), [5, 5], (255, 255, 0))
+    
+    img.putpixel([5, 5], (0, 0, 0))
+    img.putpixel([35, 5], (0, 0, 0))
+    img.putpixel([59, y_pos], (0, 0, 0))
+    img.putpixel([29, y_pos], (0, 0, 0))
             
     #UPSCALE
     factor = upscale_res / render_res
@@ -114,7 +121,6 @@ def render_frame(frame):
     #draw.text((5, upscale_res-20), 'frame: %d' % (frame), fill=(255, 255, 255), font=font)
     
     return img
-
 
 # function for refreshing the screen
 def refresh_screen():
