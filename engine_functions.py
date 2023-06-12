@@ -17,13 +17,13 @@ def draw_line(img, start, end, color):
         end = start
         start = temp
     
-    if start[1] > end[1]: #if bottom-to-top, swap top with bottom
+    elif start[1] > end[1]: #if bottom-to-top, swap top with bottom
         temp = end
         end = start
         start = temp
 
    
-    elif start[0] != end[0]: #non-vertical line
+    if start[0] != end[0]: #non-vertical line
         cursor = list(start)
         slope = numpy.abs(end[1] - start[1]) / numpy.abs(end[0] - start[0])
         stepval = int(slope) #slope's whole component
