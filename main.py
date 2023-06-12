@@ -29,18 +29,10 @@ def render_frame(frame):
     draw_line(img, (59, y_pos), [29, y_pos], (255, 255, 0))
     draw_line(img, (29, y_pos), [5, 5], (255, 255, 0))
     
-    # img.putpixel([5, 5], (0, 0, 0))
-    # img.putpixel([35, 5], (0, 0, 0))
-    # img.putpixel([59, y_pos], (0, 0, 0))
-    # img.putpixel([29, y_pos], (0, 0, 0))
-    
-    # VERTICAL LINE (bottom-to-top)
-    # draw_line(img, (40, 55), [40, 5], (255, 255, 0))
-    
-    # DIAGONAL
-    # draw_line(img, (20, 10), [50, 15], (255, 255, 0))
-    # img.putpixel([20, 10], (0, 0, 0))
-    # img.putpixel([50, 15], (0, 0, 0))
+    img.putpixel([5, 5], (0, 0, 0))
+    img.putpixel([35, 5], (0, 0, 0))
+    img.putpixel([59, y_pos], (0, 0, 0))
+    img.putpixel([29, y_pos], (0, 0, 0))
             
     #UPSCALE
     factor = upscale_res / render_res
