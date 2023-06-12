@@ -41,10 +41,10 @@ def draw_line(start, end, color):
         cursor = list(start)
         slope = numpy.abs(end[1] - start[1]) / numpy.abs(end[0] - start[0])
         stepval = int(slope) #slope's whole component
-        if slope > 1 and slope < -1:             #
-            slope_mod = (slope % stepval) ** -1  # slope_mod: the frequency at which an additional px needs to be added
+        if slope < 1 and slope > -1:             #
+            slope_mod = slope ** -1              # slope_mod: the frequency at which an additional px needs to be added
         else:                                    #
-            slope_mod = slope ** -1              #
+            slope_mod = (slope % stepval) ** -1  #
         
         #img.putpixel(start, color) #put first pixel at start
         count2 = 1
@@ -62,7 +62,7 @@ def draw_line(start, end, color):
                 #END OF STEP
                 count2 = (count2 + 1) % slope_mod
                     
-                if count2 < 0.05: #add 1px if needed
+                if count2 < 1: #add 1px if needed
                     cursor[1] += 1
                     img.putpixel(cursor, color)
             else:
@@ -94,18 +94,26 @@ def render_frame(frame):
         img.putpixel((x, y), color)
         
     ##ANIMATE TEST POLYGON
-    #bottom line moves up and down between 5 and 60
+    #bottom line moves up and down between 7 and 60
     #for some reason draw_line() doesn't like bottom-to-top lines
-    y_pos = int(((numpy.sin(numpy.deg2rad(frame%360)) + 1) / 2) * 55 + 5) #sorry, this is hard to read
+    speed = 2.0
+    y_pos = int(((numpy.sin(numpy.deg2rad(frame*speed % 360)) + 1) / 2) * 53 + 7) #sorry, this is hard to read
     draw_line((5, 5), [35, 5], (255, 255, 0))
-    # draw_line((35, 5), [59, y_pos], (255, 255, 0))
+    draw_line((35, 5), [59, y_pos], (255, 255, 0))
     draw_line((59, y_pos), [29, y_pos], (255, 255, 0))
-    # draw_line((29, y_pos), [5, 5], (255, 255, 0))
+    draw_line((29, y_pos), [5, 5], (255, 255, 0))
     
     img.putpixel([5, 5], (0, 0, 0))
     img.putpixel([35, 5], (0, 0, 0))
     img.putpixel([59, y_pos], (0, 0, 0))
     img.putpixel([29, y_pos], (0, 0, 0))
+    
+    # VERTICAL LINE (bottom-to-top)
+    draw_line((40, 55), [40, 5], (255, 255, 0))
+    # # DIAGONAL
+    # draw_line((20, 10), [50, 60], (255, 255, 0))
+    # img.putpixel([20, 10], (0, 0, 0))
+    # img.putpixel([50, 60], (0, 0, 0))
             
     #UPSCALE
     factor = upscale_res / render_res
