@@ -1,4 +1,4 @@
-from __init__ import render_res, img
+from __init__ import render_res
 
 from tkinter import *
 import numpy
@@ -9,7 +9,8 @@ def draw_line(img, start, end, color):
         raise ValueError('Invalid start coordinate')
     elif end[0]<0 or end[1]<0 or end[0]>render_res or end[1]>render_res:
         raise ValueError('Invalid end coordinate')
-################################################################################    
+
+
     #FIX DRAW DIRECTION
     if start[0] > end[0]: #if right-to-left, swap start with end
         temp = end
@@ -20,7 +21,8 @@ def draw_line(img, start, end, color):
         temp = end
         end = start
         start = temp
-################################################################################      
+
+   
     elif start[0] != end[0]: #non-vertical line
         cursor = list(start)
         slope = numpy.abs(end[1] - start[1]) / numpy.abs(end[0] - start[0])
@@ -30,12 +32,14 @@ def draw_line(img, start, end, color):
         else:                                    #
             slope_mod = (slope % stepval) ** -1  #
         
-        #img.putpixel(start, color) #put first pixel at start
+        img.putpixel(start, color) #put first pixel at start
+        count1 = stepval
         count2 = 1
         while cursor[0] < end[0]: #REPEAT UNTIL THE CURSOR REACHES THE END       
             cursor[0] += 1
             
-            #img.putpixel(cursor, color) # fill in the steps (optional: changes the line's style)
+            if slope < 1 and (count2 + 1) % slope_mod >= 1:
+                img.putpixel(cursor, color) # fill in the steps
             
             count1 = stepval
             if slope != 0: #not horizontal line
@@ -51,7 +55,8 @@ def draw_line(img, start, end, color):
                     img.putpixel(cursor, color)
             else:
                 img.putpixel(cursor, color)
-##########################################################################                    
+
+          
     elif start[0] == end[0]: #vertical line
         cursor = list(start)
         v_steps = end[1] - start[1]
@@ -61,4 +66,3 @@ def draw_line(img, start, end, color):
             while v_count < v_steps:
                 img.putpixel((cursor[0], start[1]+v_count), color)
                 v_count += 1
-                

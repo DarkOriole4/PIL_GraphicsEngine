@@ -22,24 +22,25 @@ def render_frame(frame):
     ##ANIMATE TEST POLYGON
     #bottom line moves up and down between 7 and 60
     #for some reason draw_line() doesn't like bottom-to-top lines
-    speed = 1.0
+    speed = 2.0
     y_pos = int(((numpy.sin(numpy.deg2rad(frame*speed % 360)) + 1) / 2) * 53 + 7) #sorry, this is hard to read
     draw_line(img, (5, 5), [35, 5], (255, 255, 0))
     draw_line(img, (35, 5), [59, y_pos], (255, 255, 0))
     draw_line(img, (59, y_pos), [29, y_pos], (255, 255, 0))
     draw_line(img, (29, y_pos), [5, 5], (255, 255, 0))
     
-    img.putpixel([5, 5], (0, 0, 0))
-    img.putpixel([35, 5], (0, 0, 0))
-    img.putpixel([59, y_pos], (0, 0, 0))
-    img.putpixel([29, y_pos], (0, 0, 0))
+    # img.putpixel([5, 5], (0, 0, 0))
+    # img.putpixel([35, 5], (0, 0, 0))
+    # img.putpixel([59, y_pos], (0, 0, 0))
+    # img.putpixel([29, y_pos], (0, 0, 0))
     
     # VERTICAL LINE (bottom-to-top)
     # draw_line(img, (40, 55), [40, 5], (255, 255, 0))
-    # # DIAGONAL
-    # draw_line(img, (20, 10), [50, 60], (255, 255, 0))
+    
+    # DIAGONAL
+    # draw_line(img, (20, 10), [50, 15], (255, 255, 0))
     # img.putpixel([20, 10], (0, 0, 0))
-    # img.putpixel([50, 60], (0, 0, 0))
+    # img.putpixel([50, 15], (0, 0, 0))
             
     #UPSCALE
     factor = upscale_res / render_res
@@ -67,8 +68,7 @@ def refresh_screen():
     
     
 
-#MAIN
-frame = 0
-refresh_screen()
-
-root.mainloop()
+if __name__ == "__main__":
+    frame = 0
+    refresh_screen()
+    root.mainloop()
