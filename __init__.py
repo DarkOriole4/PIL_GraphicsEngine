@@ -1,7 +1,7 @@
 from tkinter import *
 from PIL import Image
 
-render_res = 64
+render_res = 512
 upscale_res = 862
 
 ## Window  Settings
