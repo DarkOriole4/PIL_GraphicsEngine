@@ -104,8 +104,8 @@ def draw_wireframe(img, vertex_table, edge_table, color):
 
 
 
-def import_model(filename):
-    file = open(filename, "r")
+def import_model(filepath):
+    file = open(filepath, "r")
 
     vertex_table = []
     edge_table = []

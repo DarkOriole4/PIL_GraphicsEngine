@@ -64,7 +64,7 @@ def refresh_screen():
     
 
 if __name__ == "__main__":
-    vertex_table, edge_table = import_model("Torus.txt")
+    vertex_table, edge_table = import_model("primitives/Torus.txt")
 
     frame = 0
     refresh_screen()
