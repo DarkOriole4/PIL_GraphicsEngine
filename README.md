@@ -11,7 +11,7 @@ So feel free to take it if you want, make it run faster or something - as long a
 2. Run main.py
 
 # Functionalities
-At any given moment, whatever is on the screen is decided by the "render_frame" function that's located in main.py.
+At any given moment, whatever is on the screen is dictated by the "render_frame" function that's located in main.py.
 
 - You can change the color of any pixel on the screen using 
 ```
@@ -41,3 +41,10 @@ edge_table: *a table that contains the coonnections between vertices for every e
 color: ``[r, g, b]`` - *a 3 element list or tuple with 3 values between 0 and 255 that represent red, green and blue*
 
 **Example:** `draw_wireframe(img, vertex_table, edge_table, (255, 255, 255))`
+
+---------------------------------------------------------
+- `import_model(filepath)` will return both a vertex table and an edge table for any given file in the correct format
+
+filepath: *a path to a text file containing the data*
+
+**Example:** `vertex_table, edge_table = import_model("primitives/Torus.txt")`
