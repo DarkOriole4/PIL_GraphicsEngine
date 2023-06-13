@@ -21,7 +21,7 @@ for x in range(render_res):
 ```
 `render_res` is the resolution at which the screen is rendered. Later, it get's scaled up to the `upscale_res` and displayed.  
 
----------------------------------------------------------
+ ## There are a few functions that can be used to manipulate the engine:
 - `draw_line(img, start_coors, end_coors, color)` will draw a line given a startpoint, endpoint and color.  
 At this moment in time lines don't have any thickness (they have a constant thickness of 1px).  
 
