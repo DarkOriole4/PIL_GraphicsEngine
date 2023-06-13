@@ -1,4 +1,4 @@
-from engine_functions import draw_line
+from engine_functions import draw_line, import_model, draw_wireframe
 from __init__ import render_res, upscale_res, root, lmain
 from tkinter import *
 from PIL import ImageTk, Image, ImageOps, ImageDraw, ImageFont
@@ -19,21 +19,24 @@ def render_frame(frame):
         color = (int(x*(255/render_res)), int(y*(255/render_res)), 255)
         img.putpixel((x, y), color)
         
-    ##ANIMATE TEST POLYGON
-    #bottom line moves up and down between 7 and 60
-    #for some reason draw_line() doesn't like bottom-to-top lines
-    speed = 2.0
-    y_pos = int(((numpy.sin(numpy.deg2rad(frame*speed % 360)) + 1) / 2) * 53 + 7) #sorry, this is hard to read
-    draw_line(img, (5, 5), [35, 5], (255, 255, 0))
-    draw_line(img, (35, 5), [59, y_pos], (255, 255, 0))
-    draw_line(img, (59, y_pos), [29, y_pos], (255, 255, 0))
-    draw_line(img, (29, y_pos), [5, 5], (255, 255, 0))
-    
-    img.putpixel([5, 5], (0, 0, 0))
-    img.putpixel([35, 5], (0, 0, 0))
-    img.putpixel([59, y_pos], (0, 0, 0))
-    img.putpixel([29, y_pos], (0, 0, 0))
-            
+    # ##ANIMATE TEST POLYGON
+    # top line is at y_pos 33
+    # bottom line moves up and down between y_pos 7 and 60
+    # speed = 2.0
+    # y_pos = int(((numpy.sin(numpy.deg2rad(frame*speed % 360)) + 1) / 2) * 53 + 7) #sorry, this is hard to read
+    # draw_line(img, (5, 33), [35, 33], (255, 255, 0))
+    # draw_line(img, (35, 33), [59, y_pos], (255, 255, 0))
+    # draw_line(img, (59, y_pos), [29, y_pos], (255, 255, 0))
+    # draw_line(img, (29, y_pos), [5, 33], (255, 255, 0))
+    #
+    # img.putpixel([5, 33], (0, 0, 0))
+    # img.putpixel([35, 33], (0, 0, 0))
+    # img.putpixel([59, y_pos], (0, 0, 0))
+    # img.putpixel([29, y_pos], (0, 0, 0))
+
+    ## DRAW WIREFRAME
+    draw_wireframe(img, vertex_table, edge_table, (255, 255, 255))
+
     #UPSCALE
     factor = upscale_res / render_res
     img = ImageOps.scale(img, factor, 4)
@@ -61,6 +64,8 @@ def refresh_screen():
     
 
 if __name__ == "__main__":
+    vertex_table, edge_table = import_model("Torus.txt")
+
     frame = 0
     refresh_screen()
     root.mainloop()
