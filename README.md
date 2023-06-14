@@ -19,7 +19,10 @@ for x in range(render_res):
   for y in range(render_res):
     img.putpixel(x, y, color)
 ```
-`render_res` is the resolution at which the screen is rendered. Later, it get's scaled up to the `upscale_res` and displayed.  
+`render_res` is the resolution at which the screen is rendered. Later, it get's scaled up to the `upscale_res` and displayed.   
+
+- You can animate things in code using the `frame` variable that acts as an ever-incrementing clock counter
+
 
  ## There are a few functions that can be used to manipulate the engine:
 - `draw_line(img, start_coors, end_coors, color)` will draw a line given a startpoint, endpoint and color.  
