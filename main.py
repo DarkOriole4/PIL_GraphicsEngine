@@ -11,7 +11,7 @@ from math import radians
 def render_frame(frame):
     start = time.time_ns()
     
-    #CREATE BLACK CANVAS (blanking interval)
+    #CREATE BLANK CANVAS (blanking interval)
     img = Image.new("RGB", size=(render_res, render_res), color=(0, 100, 100))
 
     #RENDER
@@ -29,11 +29,6 @@ def render_frame(frame):
     # draw_line(img, (35, 33), [59, y_pos], (255, 255, 0))
     # draw_line(img, (59, y_pos), [29, y_pos], (255, 255, 0))
     # draw_line(img, (29, y_pos), [5, 33], (255, 255, 0))
-    #
-    # img.putpixel([5, 33], (0, 0, 0))
-    # img.putpixel([35, 33], (0, 0, 0))
-    # img.putpixel([59, y_pos], (0, 0, 0))
-    # img.putpixel([29, y_pos], (0, 0, 0))
 
     ## DRAW WIREFRAME
     rotated_table = rotate_mesh(vertex_table, radians(frame))
@@ -66,7 +61,7 @@ def refresh_screen():
     
 
 if __name__ == "__main__":
-    vertex_table, edge_table = import_model(__file__[:-7] + "primitives\Dodecahedron.txt")
+    vertex_table, edge_table = import_model(__file__[:-7] + "primitives\Torus.txt")
 
     frame = 0
     refresh_screen()
