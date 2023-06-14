@@ -1,6 +1,7 @@
 from __init__ import render_res, upscale_res
 from tkinter import *
 import numpy
+from math import tan, radians, cos, sin
 
 UPSCALE_RATIO = render_res / 64
 
@@ -77,20 +78,32 @@ def draw_line(img, start, end, color):
 
 
 def draw_wireframe(img, vertex_table, edge_table, color):
-    ##CALCULATE SCREEN COORDINATES
-    FOCAL = 3
-    SCALE_FACTOR = 20
+    ## SET IMPORTANT VARIABLES
+    fovy = 90 # The angle between the upper and lower sides of the viewing frustum
+    aspect = img.width / img.height  # The aspect ratio of the viewing window.
+    near = 0.1  # Number Distance to the near clipping plane along the -Z axis
+    far = 100.0  # Number Distance to the far clipping plane along the -Z axis
+    top = near * tan(radians(fovy / 120))
+    bottom = -top
+    right = top * aspect
+    left = -top
+    margin = 1
 
+    # The perspective transformation matrix
+    P_MATRIX = [[2*near/(right-left),         0,                       0,           -near*(right+left)/(right-left)],
+                [       0,            2*near/(top-bottom),             0,           -near*(top+bottom)/(top-bottom)],
+                [       0,                    0,            -(far+near)/(far-near),      2*far*near/(near-far)     ],
+                [       0,                    0,                      -1,                           0              ]]
+
+    ##CALCULATE SCREEN COORDINATES
     projected_verts = []
     for vertex in vertex_table:
-        screen_x = (FOCAL * vertex[0]) / (FOCAL + vertex[2]) * SCALE_FACTOR
-        screen_y = (FOCAL * vertex[1]) / (FOCAL + vertex[2]) * SCALE_FACTOR
-
+        vertex = list(vertex)
+        vertex.append(1)
         #format the coordinates to the correct system
-        screen_x = int((screen_x + img.width / (2*UPSCALE_RATIO)) * UPSCALE_RATIO)
-        screen_y = int((screen_y + img.width / (2*UPSCALE_RATIO)) * UPSCALE_RATIO)
-
-        projected_vert = (screen_x, screen_y)
+        # screen_x = int((screen_x + img.width / (2*UPSCALE_RATIO)) * UPSCALE_RATIO)
+        # screen_y = int((screen_y + img.width / (2*UPSCALE_RATIO)) * UPSCALE_RATIO)
+        projected_vert = numpy.matmul(vertex, P_MATRIX)
         projected_verts.append(projected_vert)
 
     ##DRAW THE WIREFRAME
@@ -98,9 +111,30 @@ def draw_wireframe(img, vertex_table, edge_table, color):
         a = edge[0]
         b = edge[1]
 
-        draw_line(img, projected_verts[a], projected_verts[b], color)
-        img.putpixel(projected_verts[a], (0, 0, 0))
-        img.putpixel(projected_verts[b], (0, 0, 0))
+        startpoint = (projected_verts[a] + img.width / (2*UPSCALE_RATIO) * UPSCALE_RATIO)
+        endpoint = (projected_verts[b] + img.width / (2*UPSCALE_RATIO) * UPSCALE_RATIO)
+
+        # restrict the coordinates to 2D and clip to the screensize
+        startpoint = numpy.clip(startpoint[0:2], 0, render_res - margin)
+        endpoint = numpy.clip(endpoint[0:2], 0, render_res - margin)
+
+        #round to int
+        startpoint = [int(coor) for coor in startpoint]
+        endpoint = [int(coor) for coor in endpoint]
+
+        draw_line(img, startpoint, endpoint, color)
+
+
+
+def rotate_mesh(vertex_table, angle):
+    y_rotation_matrix = [[cos(angle),  0, sin(angle)],
+                        [     0,       1,     0     ],
+                        [-sin(angle),  0, cos(angle)]]
+    
+    rotated_table = []
+    for vertex in vertex_table:
+        rotated_table.append(numpy.matmul(vertex, y_rotation_matrix))
+    return rotated_table
 
 
 
