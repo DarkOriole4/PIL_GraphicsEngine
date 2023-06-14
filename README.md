@@ -24,7 +24,7 @@ for x in range(render_res):
 - You can animate things in code using the `frame` variable that acts as an ever-incrementing clock counter
 
 
- ## There are a few functions that can be used to manipulate the engine:
+ ### There are a few functions that can be used to manipulate the engine:
 - `draw_line(img, start_coors, end_coors, color)` will draw a line given a startpoint, endpoint and color.  
 At this moment in time lines don't have any thickness (they have a constant thickness of 1px).  
 
@@ -45,9 +45,28 @@ color: ``[r, g, b]`` - *a 3 element list or tuple with 3 values between 0 and 25
 
 **Example:** `draw_wireframe(img, vertex_table, edge_table, (255, 255, 255))`
 
+**Inside of the function, you can change a few key variables that control the shape of the viewing frustum:**
+
+`fovy`: The angle between the upper and lower sides of the viewing frustum
+
+`near`: Number Distance to the near clipping plane along the -Z axis
+
+`far`: Number Distance to the far clipping plane along the -Z axis
+
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/ViewFrustum.svg/1200px-ViewFrustum.svg.png"  width="300" height="246">
+
 ---------------------------------------------------------
-- `import_model(filepath)` will return both a vertex table and an edge table for any given file in the correct format
+- `import_model(filepath)` will return both a vertex table and an edge table for any given file in the correct format.
 
 filepath: *a path to a text file containing the data*
 
 **Example:** `vertex_table, edge_table = import_model("primitives/Torus.txt")`
+
+--------------------------------------------------------
+- `rotate_mesh(vertex_table, angle)` given a vertex table, it returns another that is rotated on the vertical axis by a specified angle.
+
+vertex_table: *a table that contains the coordinates of every vertex of a mesh*
+
+angle: *an angle value in radians*
+
+**Example:** `rotated_table = rotate_mesh(vertex_table, math.radians(60))`
