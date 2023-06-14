@@ -66,7 +66,7 @@ def refresh_screen():
     
 
 if __name__ == "__main__":
-    vertex_table, edge_table = import_model("primitives/Dodecahedron.txt")
+    vertex_table, edge_table = import_model(__file__[:-7] + "primitives\Dodecahedron.txt")
 
     frame = 0
     refresh_screen()
