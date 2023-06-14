@@ -53,7 +53,7 @@ color: ``[r, g, b]`` - *a 3 element list or tuple with 3 values between 0 and 25
 
 `far`: Number Distance to the far clipping plane along the -Z axis
 
-<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/ViewFrustum.svg/1200px-ViewFrustum.svg.png"  width="300" height="246">
+<a href="https://www.researchgate.net/figure/A-viewing-frustum-defined-in-OpenGL-to-emulate-the-real-camera_fig1_261264621"><img src="https://docs.cocos2d-x.org/cocos2d-x/v4/en/3d/3d-img/PerspectiveCamera.png" alt="A viewing frustum defined to emulate the real camera"/></a>
 
 ---------------------------------------------------------
 - `import_model(filepath)` will return both a vertex table and an edge table for any given file in the correct format.
