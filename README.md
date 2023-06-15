@@ -12,6 +12,7 @@ So feel free to take it if you want, make it run faster or something - as long a
    - `pip install numpy`
    - `pip install numba`
    - `pip install pillow`
+3. Edit the `engine_cycle` function to display what you want *(optional)*
 4. Run main.py
 
 # Functionalities
