@@ -21,7 +21,7 @@ You can animate things in code using the `frame` variable. It acts as an ever-in
 
 
  ### There are a few functions that can be used to manipulate the engine:
-- You can change the color of any pixel on the screen using the `draw_frame(arr)` function.
+- You can change the color of any pixel on the screen by editing the `draw_frame(arr)` function.
 
 ```
 arr[x,y] = [255, 255, 255]  # this line decides about the RGB color of a given x,y pixel
