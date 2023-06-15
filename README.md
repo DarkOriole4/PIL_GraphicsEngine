@@ -33,7 +33,8 @@ for x in range(render_res):
 - `draw_line(arr, start_coors, end_coors, color)` will draw a line given a startpoint, endpoint and color.  
 At this moment in time lines don't have any thickness (they have a constant thickness of 1px).
 
-**Important!** *in order for this function to run on the GPU, it requires the image to be an array for the input. Then it needs to be converted back to an image*
+**Important!** *in order for this function to run on the GPU, it requires the image to be an array for the input. Then it needs to be converted back to an image.*
+**This is already done by default**
 
 arr: *the img object converted to an array*
 
@@ -46,7 +47,8 @@ color: ``[r, g, b]`` - *a 3 element list or tuple with 3 values between 0 and 25
 ---------------------------------------------------------
 - `draw_wireframe(arr, vertex_table, edge_table, color)` will draw a 2D projection of a previously imported mesh as a wireframe.
 
-**Important!** *in order for this function to run on the GPU, it requires the image to be an array for the input. Then it needs to be converted back to an image*
+**Important!** *in order for this function to run on the GPU, it requires the image to be an array for the input.*
+**This is already done by default**
 
 arr: *the img object converted to an array*
 
