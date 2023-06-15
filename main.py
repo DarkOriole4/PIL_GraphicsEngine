@@ -16,7 +16,7 @@ def engine_cycle(frame):
 
     # FILL IN BACKGROUND
     arr = convert_img2arr(img) # prepare for the GPU
-    arr = draw_frame(arr)
+    arr = draw_frame(arr, frame)
     img = Image.fromarray(arr) # back to the CPU
 
     ## DRAW WIREFRAME
@@ -52,7 +52,7 @@ def refresh_screen():
     
 
 if __name__ == "__main__":
-    vertex_table, edge_table = import_model(__file__[:-7] + "primitives\Torus.txt")
+    vertex_table, edge_table = import_model(__file__[:-7] + "primitives\Dodecahedron.txt")
 
     frame = 0
     refresh_screen()

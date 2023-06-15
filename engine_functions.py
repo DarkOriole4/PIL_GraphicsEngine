@@ -9,10 +9,25 @@ from PIL import Image
 
 
 @jit(target_backend="cuda")
-def draw_frame(arr): #input needs to be array for the GPU, output is array too
+def draw_frame(arr, frame): #input needs to be array for the GPU, output is array too
     for x in range(render_res):
         for y in range(render_res):
-            arr[x,y] = [int(x*(255/render_res)), int(y*(255/render_res)), 255] #this line decides about the RGB color of a given x,y pixel
+            uv = [(x/render_res - 0.5) * 2, (y/render_res - 0.5) * 2] # normalise coordinates (from -1 to 1)
+
+            center = [0, 0]  # the center of the screen
+            speed = -0.1
+            freq = 14
+            fxcolor = [102, 71, 255] #effects color
+
+            d = (dist(center, uv) - 0.49)* numpy.exp(-dist(center, uv))  # create sdf of a circle
+            d = sin(d*freq + (frame * speed)) / freq # add multiple rings and motion
+            d = abs(d)
+            if d != 0:
+                d = 0.015 / d # invert and add glow
+            d = smoothstep(0, 1, d) # smooth out artifacts and edges
+            color = [val*d for val in fxcolor]
+
+            arr[x,y] = color #this line sets the RGB color of a given x,y pixel
     return arr
 
 
@@ -105,7 +120,8 @@ def draw_line(arr, start, end, color):
 
 def draw_wireframe(arr, vertex_table, edge_table, color):
     ## SET IMPORTANT VARIABLES
-    fovy = 90 # The angle between the upper and lower sides of the viewing frustum (acts like zoom)
+    #fovy = -1.354 * render_res + 436.667 # The angle between the upper and lower sides of the viewing frustum (acts like zoom)
+    fovy = 350
     aspect = 1  # The aspect ratio of the viewing window.
     near = 0.1  # Number Distance to the near clipping plane along the -Z axis
     far = 100.0  # Number Distance to the far clipping plane along the -Z axis
@@ -149,10 +165,10 @@ def draw_wireframe(arr, vertex_table, edge_table, color):
         endpoint = [int(coor) for coor in endpoint]
 
         #find the edges approximate location (optional)
-        # loc_x = int((startpoint[0] + endpoint[0])) / 2)
+        loc_x = int((startpoint[0] + endpoint[0]) / 2)
         # loc_y = int((startpoint[1] + endpoint[1]) / 2)
 
-        new_color = colorsys.hsv_to_rgb(edge_index % 360 / 360, 1, 1) #set the color accordingly
+        new_color = colorsys.hsv_to_rgb(loc_x % 360 / 360, 1, 1) #set the color accordingly
         new_color = tuple([int(val * 255) for val in new_color]) #reformat
 
         arr = draw_line(arr, startpoint, endpoint, new_color)
@@ -213,9 +229,37 @@ def is_integer(n):
     else:
         return float(n).is_integer()
 
-
-
 def convert_img2arr(img):
     arr = numpy.array(img)
     #arr = numpy.rot90(arr, k=1, axes=(0, 1))
     return arr
+
+@jit(target_backend="cuda")
+def dist(p1, p2):
+    return numpy.sqrt((p1[0]-p2[0])**2 + (p1[1]-p2[1])**2)
+
+@jit(target_backend="cuda")
+def step(threshold, val):
+    if val >= threshold:
+        return 1
+    else:
+        return 0
+
+@jit(target_backend="cuda")
+def smoothstep(low, high, val):
+    #return numpy.tanh(val / threshold)
+    #return 1 / (1 + (numpy.e ** (-val / threshold)))
+    if low >= high:
+        return None
+    else:
+        t = clamp((val - low) / (high - low), 0, 1)
+        return  t * t * (3 - 2 * t)
+
+@jit(target_backend="cuda")
+def clamp (val, low, high):
+    if val < low:
+        return low
+    elif val > high:
+        return high
+    else:
+        return val
