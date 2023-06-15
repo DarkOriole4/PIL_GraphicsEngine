@@ -8,7 +8,11 @@ So feel free to take it if you want, make it run faster or something - as long a
 
 # How to use
 1. Extract the repository
-2. Run main.py
+2. Install these dependencies (if you don't have them already):
+   - `pip install numpy`
+   - `pip install numba`
+   - `pip install pillow`
+4. Run main.py
 
 # Functionalities
 At any given moment, whatever is displayed for every frame is dictated by the "engine_cycle" function that's located in main.py.
