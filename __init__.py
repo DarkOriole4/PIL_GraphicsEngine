@@ -1,8 +1,9 @@
 from tkinter import *
 from PIL import Image
 
-render_res = 512
+render_res = 256
 upscale_res = 862
+UPSCALE_RATIO = render_res / 64
 
 ## Window  Settings
 root = Tk()
