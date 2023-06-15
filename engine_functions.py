@@ -7,6 +7,7 @@ import colorsys
 from PIL import Image
 
 
+
 @jit(target_backend="cuda")
 def draw_frame(arr): #input needs to be array for the GPU, output is array too
     for x in range(render_res):
@@ -23,6 +24,15 @@ def draw_line(arr, start, end, color):
     elif end[0]<0 or end[1]<0 or end[0]>render_res or end[1]>render_res:
         raise ValueError('Invalid end coordinate')
 
+    #swap x and y coordinates, because the lines looked
+    # rotated 90 deg for some reason
+    temp = start[1]
+    start[1] = start[0]
+    start[0] = temp
+
+    temp = end[1]
+    end[1] = end[0]
+    end[0] = temp
 
     #FIX DRAW DIRECTION
     if start[0] > end[0]: #if right-to-left, swap start with end
@@ -202,3 +212,10 @@ def is_integer(n):
         return False
     else:
         return float(n).is_integer()
+
+
+
+def convert_img2arr(img):
+    arr = numpy.array(img)
+    #arr = numpy.rot90(arr, k=1, axes=(0, 1))
+    return arr
