@@ -11,7 +11,7 @@ So feel free to take it if you want, make it run faster or something - as long a
 2. Run main.py
 
 # Functionalities
-At any given moment, whatever is on the screen is dictated by the "render_frame" function that's located in main.py.
+At any given moment, whatever is displayed for every frame is dictated by the "engine_cycle" function that's located in main.py.
 
 - You can change the color of any pixel on the screen using 
 ```
@@ -21,12 +21,16 @@ for x in range(render_res):
 ```
 `render_res` is the resolution at which the screen is rendered. Later, it get's scaled up to the `upscale_res` and displayed.   
 
-- You can animate things in code using the `frame` variable that acts as an ever-incrementing clock counter
+- You can animate things in code using the `frame` variable. It acts as an ever-incrementing clock counter
 
 
  ### There are a few functions that can be used to manipulate the engine:
-- `draw_line(img, start_coors, end_coors, color)` will draw a line given a startpoint, endpoint and color.  
-At this moment in time lines don't have any thickness (they have a constant thickness of 1px).  
+- `draw_line(arr, start_coors, end_coors, color)` will draw a line given a startpoint, endpoint and color.  
+At this moment in time lines don't have any thickness (they have a constant thickness of 1px).
+
+**Important!** *in order for this function to run on the GPU, it requires the image to be an array for the input. Then it needs to be converted back to an image*
+
+arr: *the img object converted to an array*
 
 start_coors, end_coors: ``[x, y]`` - *a 2 element list or tuple with values that belong to the canvas*
 
@@ -35,7 +39,11 @@ color: ``[r, g, b]`` - *a 3 element list or tuple with 3 values between 0 and 25
  **Example:** `draw_line(img, [256, 100], [123, 15], (255, 6, 181))`
  
 ---------------------------------------------------------
-- `draw_wireframe(img, vertex_table, edge_table, color)` will draw a 2D projection of a previously imported mesh as a wireframe.
+- `draw_wireframe(arr, vertex_table, edge_table, color)` will draw a 2D projection of a previously imported mesh as a wireframe.
+
+**Important!** *in order for this function to run on the GPU, it requires the image to be an array for the input. Then it needs to be converted back to an image*
+
+arr: *the img object converted to an array*
 
 vertex_table: *a table that contains the coordinates of every vertex of a mesh*
 
@@ -43,7 +51,7 @@ edge_table: *a table that contains the coonnections between vertices for every e
 
 color: ``[r, g, b]`` - *a 3 element list or tuple with 3 values between 0 and 255 that represent red, green and blue*
 
-**Example:** `draw_wireframe(img, vertex_table, edge_table, (255, 255, 255))`
+**Example:** `img = draw_wireframe(arr, rotated_table, edge_table, (40, 255, 125))`
 
 **Inside of the function, you can change a few key variables that control the shape of the viewing frustum:**
 
