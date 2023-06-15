@@ -16,25 +16,21 @@ So feel free to take it if you want, make it run faster or something - as long a
 4. Run main.py
 
 # Functionalities
-At any given moment, whatever is displayed for every frame is dictated by the "engine_cycle" function that's located in main.py.
-
-- You can change the color of any pixel on the screen using 
-```
-for x in range(render_res):
-  for y in range(render_res):
-    img.putpixel(x, y, color)
-```
-`render_res` is the resolution at which the screen is rendered. Later, it get's scaled up to the `upscale_res` and displayed.   
-
-- You can animate things in code using the `frame` variable. It acts as an ever-incrementing clock counter
+At any given moment, whatever is displayed for every frame is dictated by the "engine_cycle" function that's located in main.py.  
+You can animate things in code using the `frame` variable. It acts as an ever-incrementing clock counter.
 
 
  ### There are a few functions that can be used to manipulate the engine:
+- You can change the color of any pixel on the screen using the `draw_frame(arr)` function.
+
+```
+arr[x,y] = [255, 255, 255]  # this line decides about the RGB color of a given x,y pixel
+```
+
+---------------------------------------------------------
+
 - `draw_line(arr, start_coors, end_coors, color)` will draw a line given a startpoint, endpoint and color.  
 At this moment in time lines don't have any thickness (they have a constant thickness of 1px).
-
-**Important!** *in order for this function to run on the GPU, it requires the image to be an array for the input. Then it needs to be converted back to an image.*
-**This is already done by default**
 
 arr: *the img object converted to an array*
 
@@ -46,9 +42,6 @@ color: ``[r, g, b]`` - *a 3 element list or tuple with 3 values between 0 and 25
  
 ---------------------------------------------------------
 - `draw_wireframe(arr, vertex_table, edge_table, color)` will draw a 2D projection of a previously imported mesh as a wireframe.
-
-**Important!** *in order for this function to run on the GPU, it requires the image to be an array for the input.*
-**This is already done by default**
 
 arr: *the img object converted to an array*
 
@@ -85,3 +78,8 @@ vertex_table: *a table that contains the coordinates of every vertex of a mesh*
 angle: *an angle value in radians*
 
 **Example:** `rotated_table = rotate_mesh(vertex_table, math.radians(60))`
+
+------------------------------------------------------
+
+**Important!** *in order for some functions to run on the GPU, they require the image to be an array for the input. Then it needs to be converted back to an image.*
+**This is already done by default**
