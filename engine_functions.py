@@ -120,8 +120,7 @@ def draw_line(arr, start, end, color):
 
 def draw_wireframe(arr, vertex_table, edge_table, color):
     ## SET IMPORTANT VARIABLES
-    #fovy = -1.354 * render_res + 436.667 # The angle between the upper and lower sides of the viewing frustum (acts like zoom)
-    fovy = 350
+    fovy = 0.99157**(render_res-750) + 22 # The angle between the upper and lower sides of the viewing frustum (acts like zoom)
     aspect = 1  # The aspect ratio of the viewing window.
     near = 0.1  # Number Distance to the near clipping plane along the -Z axis
     far = 100.0  # Number Distance to the far clipping plane along the -Z axis
