@@ -1,4 +1,4 @@
-from engine_functions import draw_frame, draw_line, import_model, draw_wireframe, rotate_mesh
+from engine_functions import draw_frame, draw_line, import_model, draw_wireframe, rotate_mesh, convert_img2arr
 from __init__ import render_res, upscale_res, root, lmain
 from tkinter import *
 from PIL import ImageTk, Image, ImageOps, ImageDraw, ImageFont
@@ -15,13 +15,14 @@ def engine_cycle(frame):
     img = Image.new("RGB", size=(render_res, render_res), color=(0, 100, 100))
 
     # FILL IN BACKGROUND
-    arr = numpy.array(img)
-    img = Image.fromarray(draw_frame(arr))
+    arr = convert_img2arr(img) # prepare for the GPU
+    arr = draw_frame(arr)
+    img = Image.fromarray(arr) # back to the CPU
 
     ## DRAW WIREFRAME
     rotated_table = rotate_mesh(vertex_table, radians(frame))
 
-    arr = numpy.array(img)  # prepare for the GPU
+    arr = convert_img2arr(img)  # prepare for the GPU
     img = draw_wireframe(arr, rotated_table, edge_table, (40, 255, 125))
 
     #UPSCALE
