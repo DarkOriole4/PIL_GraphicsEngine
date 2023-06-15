@@ -1,14 +1,25 @@
-from __init__ import render_res, upscale_res
+from __init__ import render_res, upscale_res, UPSCALE_RATIO
 from tkinter import *
 import numpy
 from math import tan, radians, cos, sin
+from numba import jit, cuda
+import colorsys
+from PIL import Image
 
-UPSCALE_RATIO = render_res / 64
+
+@jit(target_backend="cuda")
+def draw_frame(arr): #input needs to be array for the GPU, output is array too
+    for x in range(render_res):
+        for y in range(render_res):
+            arr[x,y] = [int(x*(255/render_res)), int(y*(255/render_res)), 255] #this line decides about the RGB color of a given x,y pixel
+    return arr
 
 
-def draw_line(img, start, end, color):
+#@jit(target_backend="cuda")  # disabled for now
+def draw_line(arr, start, end, color):
     if start[0]<0 or start[1]<0 or start[0]>render_res or start[1]>render_res:
         raise ValueError('Invalid start coordinate')
+
     elif end[0]<0 or end[1]<0 or end[0]>render_res or end[1]>render_res:
         raise ValueError('Invalid end coordinate')
 
@@ -20,22 +31,24 @@ def draw_line(img, start, end, color):
         start = temp
    
     if start[0] != end[0]: #non-vertical line
-        cursor = list(start)
+        cursor = numpy.array(start)
         slope = (end[1] - start[1]) / numpy.abs(end[0] - start[0])
         stepval = abs(int(slope)) #slope's whole component
-        if slope < 1 and slope > -1:              #
+        if slope == 0 or is_integer(slope):       #
+            slope_mod = 0                         #
+        elif slope < 1 and slope > -1:            #
             slope_mod = 1 / slope                 # slope_mod: the frequency at which an additional px needs to be added
         else:                                     #
             slope_mod = 1 / (slope - int(slope))  #
-        
-        img.putpixel(start, color) #put first pixel at start
+
+        arr[start[0], start[1]] = color #put first pixel at start
         count1 = stepval
         count2 = 1
         while cursor[0] < end[0]: #REPEAT UNTIL THE CURSOR REACHES THE END       
             cursor[0] += 1
 
-            if (slope < 1 and slope > -1) and ((count2 + 1) % slope_mod >= 1 or (count2 + 1) % slope_mod <= -1): #ok, I give up
-                img.putpixel(cursor, color) # fill in the steps
+            if slope != 0 and (slope < 1 and slope > -1) and ((count2 + 1) % slope_mod >= 1 or (count2 + 1) % slope_mod <= -1): #ok, I give up
+                arr[cursor[0], cursor[1]] = color # fill in the steps
             
             count1 = stepval
             if slope != 0: #not horizontal line
@@ -45,10 +58,11 @@ def draw_line(img, start, end, color):
                     else:
                         cursor[1] -= 1
 
-                    img.putpixel(cursor, color)
+                    arr[cursor[0], cursor[1]] = color
                     count1 -= 1
                 # END OF STEP
-                count2 = (count2 + 1) % slope_mod
+                if slope_mod != 0:
+                    count2 = (count2 + 1) % slope_mod
                     
                 if count2 < 1 and count2 > -1: # add 1px if needed
                     if slope > 0:
@@ -56,31 +70,33 @@ def draw_line(img, start, end, color):
                     else:
                         cursor[1] -= 1
 
-                    img.putpixel(cursor, color)
+                    arr[cursor[0], cursor[1]] = color
             else:
-                img.putpixel(cursor, color)
+                arr[cursor[0], cursor[1]] = color
 
           
     elif start[0] == end[0]: # vertical line
-        cursor = list(start)
+        cursor = numpy.array(start)
         v_steps = abs(end[1] - start[1])
         
         v_count = 0
         if start[1] < end[1]: # top-to-bottom
             while v_count < v_steps:
-                img.putpixel((cursor[0], start[1]+v_count), color)
+                arr[cursor[0], start[1]+v_count] = color
                 v_count += 1
         else: # bottom-to-top
             while v_count < v_steps:
-                img.putpixel((cursor[0], start[1]-v_count), color)
+                arr[cursor[0], start[1]-v_count] = color
                 v_count += 1
 
+    return arr
 
 
-def draw_wireframe(img, vertex_table, edge_table, color):
+
+def draw_wireframe(arr, vertex_table, edge_table, color):
     ## SET IMPORTANT VARIABLES
-    fovy = 90 # The angle between the upper and lower sides of the viewing frustum
-    aspect = img.width / img.height  # The aspect ratio of the viewing window.
+    fovy = 90 # The angle between the upper and lower sides of the viewing frustum (acts like zoom)
+    aspect = 1  # The aspect ratio of the viewing window.
     near = 0.1  # Number Distance to the near clipping plane along the -Z axis
     far = 100.0  # Number Distance to the far clipping plane along the -Z axis
     top = near * tan(radians(fovy / 120))
@@ -101,18 +117,18 @@ def draw_wireframe(img, vertex_table, edge_table, color):
         vertex = list(vertex)
         vertex.append(1)
         #format the coordinates to the correct system
-        # screen_x = int((screen_x + img.width / (2*UPSCALE_RATIO)) * UPSCALE_RATIO)
-        # screen_y = int((screen_y + img.width / (2*UPSCALE_RATIO)) * UPSCALE_RATIO)
         projected_vert = numpy.matmul(vertex, P_MATRIX)
         projected_verts.append(projected_vert)
 
     ##DRAW THE WIREFRAME
+    edge_index = 0
     for edge in edge_table:
         a = edge[0]
         b = edge[1]
 
-        startpoint = (projected_verts[a] + img.width / (2*UPSCALE_RATIO) * UPSCALE_RATIO)
-        endpoint = (projected_verts[b] + img.width / (2*UPSCALE_RATIO) * UPSCALE_RATIO)
+        #center the model in the middle of the screen
+        startpoint = (projected_verts[a] + render_res / (2*UPSCALE_RATIO) * UPSCALE_RATIO)
+        endpoint = (projected_verts[b] + render_res / (2*UPSCALE_RATIO) * UPSCALE_RATIO)
 
         # restrict the coordinates to 2D and clip to the screensize
         startpoint = numpy.clip(startpoint[0:2], 0, render_res - margin)
@@ -122,7 +138,18 @@ def draw_wireframe(img, vertex_table, edge_table, color):
         startpoint = [int(coor) for coor in startpoint]
         endpoint = [int(coor) for coor in endpoint]
 
-        draw_line(img, startpoint, endpoint, color)
+        #find the edges approximate location (optional)
+        # loc_x = int((startpoint[0] + endpoint[0])) / 2)
+        # loc_y = int((startpoint[1] + endpoint[1]) / 2)
+
+        new_color = colorsys.hsv_to_rgb(edge_index % 360 / 360, 1, 1) #set the color accordingly
+        new_color = tuple([int(val * 255) for val in new_color]) #reformat
+
+        arr = draw_line(arr, startpoint, endpoint, new_color)
+        edge_index += 1
+
+    img = Image.fromarray(arr)  # back to the CPU
+    return img
 
 
 
@@ -165,3 +192,13 @@ def import_model(filepath):
                 edge_table.append(values)
     file.close()
     return vertex_table, edge_table
+
+
+
+def is_integer(n):
+    try:
+        float(n)
+    except ValueError:
+        return False
+    else:
+        return float(n).is_integer()
