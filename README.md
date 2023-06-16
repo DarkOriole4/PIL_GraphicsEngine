@@ -105,6 +105,6 @@ angle: *an angle value in radians*
 - `clamp (val, low, high)` Clamps the value between low and high. If the value is lower than low, it will always return low. If it's higher than high, it returns high.
 This way the value is forced to always stay between those specified low and high numbers.
 
-**Example:** `clamp (val, low, high)`
+**Example:** `clamp (0, 1, 0.56)`
 
 ------------------------------------------------------
