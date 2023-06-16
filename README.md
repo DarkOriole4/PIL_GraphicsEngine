@@ -21,7 +21,7 @@ You can animate things in code using the `frame` variable. It acts as an ever-in
 
 
  ### There are a few functions that can be used to manipulate the engine:
-- You can change the color of any pixel on the screen by editing the `draw_frame(arr)` function.
+- You can change the color of any pixel on the screen by editing the `draw_frame(arr, frame)` function.
 
 ```
 arr[x,y] = [255, 255, 255]  # this line decides about the RGB color of a given x,y pixel
@@ -83,3 +83,28 @@ angle: *an angle value in radians*
 
 **Important!** *in order for some functions to run on the GPU, they require the image to be an array for the input. Then it needs to be converted back to an image.*
 **This is already done by default**
+
+------------------------------------------------------
+
+- `dist(p1, p2)` given two points, it returns the distance between them.
+
+**Example:** `dist([0, 0], [42, 66])`
+
+------------------------------------------------------
+- `step(threshold, val)` if the value is above or equal to a certain thereshold, it returns 1 - otherwise it returns 0.
+
+**Example:** `step(3, 6)`
+
+------------------------------------------------------
+- `smoothstep(low, high, val)` Works the same as with the function above, but with two thresholds and the outputs transition between 0 and 1 is smooth. The points where it fully becomes either 0 or 1 are specified by the low and high values.
+
+**Example:** `smoothstep(3, 12, 6)`
+
+------------------------------------------------------
+
+- `clamp (val, low, high)` Clamps the value between low and high. If the value is lower than low, it will always return low. If it's higher than high, it returns high.
+This way the value is forced to always stay between those specified low and high numbers.
+
+**Example:** `clamp (val, low, high)`
+
+------------------------------------------------------
