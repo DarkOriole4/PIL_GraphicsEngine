@@ -6,6 +6,10 @@ So feel free to take it if you want, make it run faster or something - as long a
 
 <em>Please don't judge, I'm doing this for fun</em>
 
+# Demo
+
+<a href="PILGE_demo"><img src="https://github.com/DarkOriole4/PIL_GraphicsEngine/blob/main/PILGE_demo1.gif" width="450" height="450"></a>
+
 # How to use
 1. Extract the repository
 2. Install these dependencies (if you don't have them already):
