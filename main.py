@@ -25,7 +25,7 @@ def engine_cycle(frame):
     arr = convert_img2arr(img)  # prepare for the GPU
     img = draw_wireframe(arr, rotated_table, edge_table, (40, 255, 125))
 
-    #UPSCALE
+    ## UPSCALE
     factor = upscale_res / render_res
     img = ImageOps.scale(img, factor, 4)
 
@@ -36,8 +36,8 @@ def engine_cycle(frame):
     frame_time = (end-start)/1000000
     fps = 1000 / frame_time
     draw.text((5, 5), 'frame_time: %dms\nfps: %d' % (frame_time, fps), fill=(255, 255, 255), font=font, spacing=5, align='left') # displays frame time and fps
-    #draw.text((5, upscale_res-20), 'frame: %d' % (frame), fill=(255, 255, 255), font=font) # displays frame count
-    
+    # #draw.text((5, upscale_res-20), 'frame: %d' % (frame), fill=(255, 255, 255), font=font) # displays frame count
+
     return img
 
 

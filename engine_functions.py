@@ -43,11 +43,11 @@ def draw_line(arr, start, end, color):
     # rotated 90 deg for some reason
     temp = start[1]
     start[1] = start[0]
-    start[0] = temp
+    start[0] = -temp
 
     temp = end[1]
     end[1] = end[0]
-    end[0] = temp
+    end[0] = -temp
 
     #FIX DRAW DIRECTION
     if start[0] > end[0]: #if right-to-left, swap start with end
@@ -120,7 +120,11 @@ def draw_line(arr, start, end, color):
 
 def draw_wireframe(arr, vertex_table, edge_table, color):
     ## SET IMPORTANT VARIABLES
-    fovy = 0.99157**(render_res-750) + 22 # The angle between the upper and lower sides of the viewing frustum (acts like zoom)
+    autozoom = True
+    if autozoom == True:
+        fovy = 0.99157**(render_res-750) + 22 # The angle between the upper and lower sides of the viewing frustum (acts like zoom)
+    else:
+        fovy = 40
     aspect = 1  # The aspect ratio of the viewing window.
     near = 0.1  # Number Distance to the near clipping plane along the -Z axis
     far = 100.0  # Number Distance to the far clipping plane along the -Z axis
@@ -163,11 +167,11 @@ def draw_wireframe(arr, vertex_table, edge_table, color):
         startpoint = [int(coor) for coor in startpoint]
         endpoint = [int(coor) for coor in endpoint]
 
-        #find the edges approximate location (optional)
-        loc_x = int((startpoint[0] + endpoint[0]) / 2)
+        #find the edges approximate location 0 - 1 (optional)
+        loc_x = int((startpoint[0] + endpoint[0]) / 2) / render_res
         # loc_y = int((startpoint[1] + endpoint[1]) / 2)
 
-        new_color = colorsys.hsv_to_rgb(loc_x % 360 / 360, 1, 1) #set the color accordingly
+        new_color = colorsys.hsv_to_rgb(loc_x*360 / 360, 1, 1) #set the color accordingly
         new_color = tuple([int(val * 255) for val in new_color]) #reformat
 
         arr = draw_line(arr, startpoint, endpoint, new_color)
