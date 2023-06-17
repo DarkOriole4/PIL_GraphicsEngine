@@ -23,6 +23,10 @@ So feel free to take it if you want, make it run faster or something - as long a
 At any given moment, whatever is displayed for every frame is dictated by the "engine_cycle" function that's located in main.py.  
 You can animate things in code using the `frame` variable. It acts as an ever-incrementing clock counter.
 
+To switch the 3D mesh that is displayed by the `draw_wireframe` funtion, change the filename at the end of `main.py`. You can choose among the models in the primitives folder:
+- `Cube.txt`
+- `Dodecahedron.txt`
+- `Torus.txt`
 
  ### There are a few functions that can be used to manipulate the engine:
 - You can change the color of any pixel on the screen by editing the `draw_frame(arr, frame)` function.
@@ -57,7 +61,7 @@ color: ``[r, g, b]`` - *a 3 element list or tuple with 3 values between 0 and 25
 
 **Example:** `img = draw_wireframe(arr, rotated_table, edge_table, (40, 255, 125))`
 
-**Inside of the function, you can change a few key variables that control the shape of the viewing frustum:**
+**Inside of the function, you can change a few key variables that control the shape of the viewing frustum (which controls what gets actually rendered):**
 
 `fovy`: The angle between the upper and lower sides of the viewing frustum
 
