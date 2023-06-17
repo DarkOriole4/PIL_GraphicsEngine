@@ -25,7 +25,7 @@ You can animate things in code using the `frame` variable. It acts as an ever-in
 
 To switch the 3D mesh that is displayed by the `draw_wireframe` funtion, change the filename at the end of `main.py`. You can choose among the models in the primitives folder:
 - `Cube.txt`
-- `Dodecahedron.txt`
+- `Dodecahedron.txt` (default)
 - `Torus.txt`
 
  ### There are a few functions that can be used to manipulate the engine:
